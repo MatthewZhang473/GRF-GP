@@ -30,7 +30,7 @@ def test_grf_sampler_chain_walks_single_process():
         n_processes=1,
     )
 
-    mats = sampler.sample_random_walk_matrices()
+    mats = sampler()
     assert len(mats) == 3
 
     dense = [m.sparse_csr_tensor.to_dense() for m in mats]
@@ -65,7 +65,7 @@ def test_grf_sampler_halt_and_multiprocessing():
         n_processes=2,
     )
 
-    mats = sampler.sample_random_walk_matrices()
+    mats = sampler()
     dense = [m.sparse_csr_tensor.to_dense() for m in mats]
 
     assert torch.allclose(dense[0], torch.eye(2))
@@ -89,7 +89,7 @@ def test_grf_sampler_consistent_across_process_counts(n_processes: int):
         use_tqdm=False,
         n_processes=n_processes,
     )
-    mats = sampler.sample_random_walk_matrices()
+    mats = sampler()
 
     dense = [m.sparse_csr_tensor.to_dense() for m in mats]
     # Baseline with single process should match
@@ -102,14 +102,13 @@ def test_grf_sampler_consistent_across_process_counts(n_processes: int):
         use_tqdm=False,
         n_processes=1,
     )
-    dense_single = [
-        m.sparse_csr_tensor.to_dense() for m in sampler_single.sample_random_walk_matrices()
-    ]
+    dense_single = [m.sparse_csr_tensor.to_dense() for m in sampler_single()]
 
     for a, b in zip(dense, dense_single):
         assert torch.allclose(a, b)
 
 
+@pytest.mark.parametrize("n_processes", [1, 2])
 def test_grf_sampler_matches_adj_powers_small_graph(n_processes: int):
     crows = [0, 3, 5, 7, 8]
     cols = [1, 2, 3, 0, 2, 0, 3, 0]
@@ -128,9 +127,9 @@ def test_grf_sampler_matches_adj_powers_small_graph(n_processes: int):
         max_walk_length=3,
         seed=42,
         use_tqdm=False,
-        n_processes=1,
+        n_processes=n_processes,
     )
-    mats = sampler.sample_random_walk_matrices()
+    mats = sampler()
 
     adjacency_dense = adjacency.to_dense()
     for t in range(3):
