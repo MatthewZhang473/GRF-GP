@@ -32,4 +32,3 @@ If you use GRF-GP, please cite the following papers:
     }
 
 ## Contributing
-

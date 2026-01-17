@@ -42,14 +42,15 @@ class BaseGRFKernel(gpytorch.kernels.Kernel, ABC):  # abstract class
 
     def _get_feature_matrix(self):
         """
-        Returns the feature matrix Phi, the ith row is the GRF vector for the ith node.
-
+        Returns the feature matrix Phi,
+        the ith row is the GRF vector for the ith node.
         Ideally this should be lazy-evaluated linear operator.
         """
-        # Build the combined matrix Phi = sum(modulator_vector[i] * step_matrices[i])
-        # TODO: Check SumLinearOperator(...)
         phi = sum(
             mod_vec * mat
-            for mod_vec, mat in zip(self.modulation_function, self.step_matrices)
+            for mod_vec, mat in zip(
+                self.modulation_function,
+                self.step_matrices,
+            )
         )
         return phi

@@ -6,7 +6,8 @@ from grf_gp.sampler import GRFSampler
 def _chain_adjacency(num_nodes: int) -> torch.Tensor:
     """
     Build a simple chain graph where each node connects to the next,
-    and the last node has a self-loop. Degree is 1 everywhere, so walks are deterministic.
+    and the last node has a self-loop.
+    Degree is 1 everywhere, so walks are deterministic.
     """
     rows = torch.arange(num_nodes, dtype=torch.int64)
     cols = torch.cat([torch.arange(1, num_nodes), torch.tensor([num_nodes - 1])])
@@ -48,7 +49,7 @@ def test_grf_sampler_chain_walks_single_process():
 
 
 def test_grf_sampler_halt_and_multiprocessing():
-    # With p_halt=1, only the 0-step matrix should have counts (diagonal = walks_per_node)
+    # With p_halt=1, only the 0-step matrix should have counts
     adjacency = torch.sparse_coo_tensor(
         torch.tensor([[0, 1], [1, 0]]), torch.ones(2), size=(2, 2)
     ).to_sparse_csr()
@@ -66,5 +67,36 @@ def test_grf_sampler_halt_and_multiprocessing():
     mats = sampler.sample_random_walk_matrices()
     dense = [m.sparse_csr_tensor.to_dense() for m in mats]
 
-    assert torch.allclose(dense[0], torch.eye(2) * 2)
+    assert torch.allclose(dense[0], torch.eye(2))
     assert torch.count_nonzero(dense[1]) == 0
+
+
+def test_grf_sampler_matches_adj_powers_small_graph():
+    crows = [0, 3, 5, 7, 8]
+    cols = [1, 2, 3, 0, 2, 0, 3, 0]
+    data = [1, 1, 1, 1, 1, 1, 1, 1]
+    adjacency = torch.sparse_csr_tensor(
+        torch.tensor(crows),
+        torch.tensor(cols),
+        torch.tensor(data, dtype=torch.float32),
+        size=(4, 4),
+    )
+
+    sampler = GRFSampler(
+        adjacency_matrix=adjacency,
+        walks_per_node=1000,
+        p_halt=0.1,
+        max_walk_length=3,
+        seed=42,
+        use_tqdm=False,
+        n_processes=4,
+    )
+    mats = sampler.sample_random_walk_matrices()
+
+    adjacency_dense = adjacency.to_dense()
+    for t in range(3):
+        rw = mats[t].sparse_csr_tensor.to_dense()
+        adj_power = torch.linalg.matrix_power(adjacency_dense, t)
+        assert torch.allclose(
+            rw, adj_power, rtol=0.0, atol=0.3
+        )  # slightly looser tolerance due to randomness

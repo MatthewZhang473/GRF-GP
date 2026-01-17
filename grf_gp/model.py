@@ -3,6 +3,7 @@ import gpytorch
 from gpytorch import settings as gsettings
 from linear_operator.utils import linear_cg
 from linear_operator.operators import IdentityLinearOperator
+from .kernels.base import BaseGRFKernel
 
 
 class GraphGP(gpytorch.models.ExactGP):

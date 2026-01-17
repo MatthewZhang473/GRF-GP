@@ -1,4 +1,3 @@
-import torch
 from linear_operator.operators import LinearOperator
 
 

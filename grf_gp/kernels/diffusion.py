@@ -4,9 +4,14 @@ import torch.nn.functional as F
 from .base import BaseGRFKernel
 
 
-def diffusion_modulation(length: torch.Tensor, beta: torch.Tensor) -> torch.Tensor:
-    """
-    Compute diffusion modulator vector: (-beta)^length / (2^length * Gamma(length + 1))
+def diffusion(length: torch.Tensor, beta: torch.Tensor) -> torch.Tensor:
+    r"""
+    Compute the diffusion modulation term
+
+    .. math::
+        f(\ell, \beta) = \frac{(-\beta)^\ell}{2^\ell \, \Gamma(\ell + 1)}
+
+    where :math:`\ell` is the walk length and :math:`\beta` the diffusion rate.
     """
     length = length.to(dtype=beta.dtype, device=beta.device)
 
@@ -49,6 +54,8 @@ class GRFDiffusionKernel(BaseGRFKernel):
     @property
     def modulation_function(self) -> torch.Tensor:
         walk_lengths = torch.arange(
-            self.max_walk_length, dtype=self.raw_beta.dtype, device=self.raw_beta.device
+            self.max_walk_length,
+            dtype=self.raw_beta.dtype,
+            device=self.raw_beta.device,
         )
-        return self.sigma_f * diffusion_modulation(walk_lengths, self.beta)
+        return self.sigma_f * diffusion(walk_lengths, self.beta)

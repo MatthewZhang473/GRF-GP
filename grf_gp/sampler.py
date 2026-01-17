@@ -8,10 +8,9 @@ from typing import List, Optional, Union
 
 import numpy as np
 import torch
-import scipy.sparse as sp
 from tqdm.auto import tqdm
 
-from utils.linear_operator import SparseLinearOperator
+from .utils.linear_operator import SparseLinearOperator
 
 
 def _to_sparse_csr(
@@ -149,7 +148,8 @@ def _init_worker(crow: np.ndarray, col: np.ndarray, data: np.ndarray) -> None:
 
 class GRFSampler:
     """
-    Generates GRF random walk matrices and returns them as SparseLinearOperator objects.
+    Generates GRF random walk matrices
+    and returns them as SparseLinearOperator objects.
     """
 
     def __init__(
@@ -187,7 +187,8 @@ class GRFSampler:
 
         ctx = mp.get_context("fork")
 
-        # Fast path: single process still uses the same merging logic to avoid duplication
+        # Fast path: single process still uses
+        # the same merging logic to avoid duplication
         if n_proc == 1:
             results = [
                 _run_walks_local(
@@ -230,8 +231,7 @@ class GRFSampler:
 
         matrices = [
             SparseLinearOperator(
-                _build_csr_from_entries(num_nodes, acc)
-                * (1.0 / self.walks_per_node)
+                _build_csr_from_entries(num_nodes, acc) * (1.0 / self.walks_per_node)
             )
             for acc in accumulators
         ]
@@ -242,10 +242,6 @@ class GRFSampler:
 
 
 if __name__ == "__main__":
-    # Check available CPU cores
-    print(f"Available CPU cores: {os.cpu_count()}")
-
-    # Example usage with a small CSR adjacency
     rows = [0, 0, 0, 1, 1, 2, 2, 3]
     cols = [1, 2, 3, 0, 2, 0, 3, 0]
     data = [1, 1, 1, 1, 1, 1, 1, 1]
@@ -260,13 +256,20 @@ if __name__ == "__main__":
         adjacency_matrix=adjacency,
         walks_per_node=1000,
         p_halt=0.1,
-        max_walk_length=6,
+        max_walk_length=3,
         seed=42,
         use_tqdm=True,
         n_processes=2,
     )
     random_walk_mats = sampler.sample_random_walk_matrices()
 
-    print(f"Generated {len(random_walk_mats)} random walk matrices")
-    print("Example random walk matrix (t=1):")
-    print(random_walk_mats[1].sparse_csr_tensor.to_dense())
+    adjacency_dense = adjacency.to_dense()
+    print("Adjacency (dense):")
+    print(adjacency_dense)
+    for t in range(sampler.max_walk_length):
+        rw_dense = random_walk_mats[t].sparse_csr_tensor.to_dense()
+        adj_power = torch.linalg.matrix_power(adjacency_dense, t)
+        print(f"t={t} random walk matrix (dense):")
+        print(rw_dense)
+        print(f"t={t} adjacency^{t} (dense):")
+        print(adj_power)
