@@ -2,22 +2,34 @@
 name = "fast-graph-gp"
 version = "0.1.0"
 description = "Graph Random Features for Scalable Gaussian Processes (GRF-GP)"
-authors = [{ name = "Matthew Zhang", email = "matthew.zhang473@gmail.com" }]
-license = { text = "MIT" }
-requires-python = ">=3.10"
+readme = "README.md"
+authors = [{name = "Matthew Zhang", email = "matthew.zhang473@gmail.com"}]
+license = {text = "MIT"}
+keywords = ["gaussian-processes", "graph-kernels", "machine-learning", "pytorch"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+requires-python = ">=3.8"
 dependencies = [
     "torch>=2.0.0",
     "gpytorch>=1.10",
-    "numpy",
-    "scipy",
-    "tqdm",
+    "numpy>=1.21.0",
+    "scipy>=1.10.0",
+    "tqdm>=4.65.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/MatthewZhang473/GRF-GP"
+Repository = "https://github.com/MatthewZhang473/GRF-GP"
+Documentation = "https://github.com/MatthewZhang473/GRF-GP#readme"
+Issues = "https://github.com/MatthewZhang473/GRF-GP/issues"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["src"]
-addopts = "-v"

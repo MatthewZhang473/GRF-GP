@@ -9,6 +9,7 @@ build/
 
 # Virtual environments
 venv/
+test_env/
 .env/
 env/
 
