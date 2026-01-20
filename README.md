@@ -5,20 +5,17 @@
 GRF-GP is the package for performing fast Gaussian Process (GP) inference on graphs. Internally, it uses **Graph Random Features** (GRFs) to compute a **unbiased** & **sparse** estimate of a family of well-known graph node kernels. It further uses **path-wise conditioning** to leverage the sparsity of the kernel approximation, enabling you to perform GP model train / inference in $\mathcal{O}(N^{3/2})$ time and $\mathcal{O}(N)$ space complexity.
 
 
-
 ## Examples
 
-
-- Graph GP inference
-
---- Maybe move the below examples to another repo ---
-- Regression tasks
-- Classification tasks
-- Bayesian Optimization
-
+For a detailed example of training and using a Graph GP model, refer to the [example notebook](examples/basic_usage.ipynb).
 
 ## Installation
 
+Install GRF-GP via pip:
+
+```bash
+pip install grf-gp
+```
 
 ## Citing Us
 
@@ -30,5 +27,3 @@ If you use GRF-GP, please cite the following papers:
     journal={arXiv preprint arXiv:2509.03691},
     year={2025}
     }
-
-## Contributing

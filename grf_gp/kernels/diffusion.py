@@ -29,8 +29,8 @@ class GRFDiffusionKernel(BaseGRFKernel):
     GRF kernel with diffusion modulation.
     """
 
-    def __init__(self, max_walk_length, step_matrices_torch, **kwargs):
-        super().__init__(step_matrices_torch=step_matrices_torch, **kwargs)
+    def __init__(self, max_walk_length, rw_mats, **kwargs):
+        super().__init__(rw_mats=rw_mats, **kwargs)
 
         self.max_walk_length = max_walk_length
         self.register_parameter(

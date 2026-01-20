@@ -4,9 +4,9 @@ from abc import ABC, abstractmethod
 
 
 class BaseGRFKernel(gpytorch.kernels.Kernel, ABC):  # abstract class
-    def __init__(self, step_matrices_torch, **kwargs):
+    def __init__(self, rw_mats, **kwargs):
         super().__init__(**kwargs)
-        self.step_matrices = step_matrices_torch
+        self.rw_mats = rw_mats
 
     @property
     @abstractmethod
@@ -50,7 +50,7 @@ class BaseGRFKernel(gpytorch.kernels.Kernel, ABC):  # abstract class
             mod_vec * mat
             for mod_vec, mat in zip(
                 self.modulation_function,
-                self.step_matrices,
+                self.rw_mats,
             )
         )
         return phi
