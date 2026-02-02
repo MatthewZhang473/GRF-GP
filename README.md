@@ -4,6 +4,15 @@
 
 Fast-Graph-GP is the package for performing fast Gaussian Process (GP) inference on graphs. Internally, it uses **Graph Random Features** (GRFs) to compute a **unbiased** & **sparse** estimate of a family of well-known graph node kernels. It further uses **path-wise conditioning** to leverage the sparsity of the kernel approximation, enabling you to perform GP model train / inference in $\mathcal{O}(N^{3/2})$ time and $\mathcal{O}(N)$ space complexity.
 
+**This package is in beta.** Package development TODOs:
+
+- [x] support graph GP inference / training with GRFs
+- [ ] script to measure the inference time / space complexity
+- [ ] notebook to reproduce the regression experiments
+- [ ] notebook to reproduce the classificiation experiments
+- [ ] notebook to reproduce the BayesOpt experiments
+- [ ] support GRF++ samplers
+
 
 ## Examples
 
